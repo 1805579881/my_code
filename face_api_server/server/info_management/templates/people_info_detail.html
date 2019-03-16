@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block main_style %}
+    {{ block.super }}
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/all.css' %}" rel="stylesheet">
+    <link href="{% static 'css/project.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block main_script %}
+    {{ block.super }}
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-table.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-table-zh-CN.min.js' %}"></script>
+{% endblock %}
+
+{% block people_info_detail %}
+
+    <h1>查看人员</h1>
+    <hr>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="container">
+
+                <h2>个人信息</h2>
+                {% for i in people_info %}
+
+                    <ul class="list-group custom-profile-url">
+                        <li class="list-group-item" >
+                            <img class="custom-profile-image" height="60" width="60"
+                                 src="data:image/png;base64,{{ i.image_base64 }}">
+                        </li>
+                        <li class="list-group-item"><span class="custom-profile-span-left">姓名：</span><span
+                                class="custom-profile-span-right">{{ i.name }}</span></li>
+                        <li class="list-group-item"><span class="custom-profile-span-left">工号：</span><span
+                                class="custom-profile-span-right">{{ i.number }}</span></li>
+                    </ul>
+
+                <div class="custom-button-div">
+                    <button type="button" class="btn btn-info"
+                            onclick="window.location.href=' http://127.0.0.1:8000/info_management/edit/?pk={{ i.pk }}'">编辑
+                    </button>
+                    <button type="button" class="btn btn-danger"
+                            onclick="window.location.href='{% url 'info_management:info_management_index' %}'">返回
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+{% endblock %}

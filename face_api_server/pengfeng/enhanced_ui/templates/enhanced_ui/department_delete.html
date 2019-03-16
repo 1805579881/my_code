@@ -1,0 +1,38 @@
+{% extends "enhanced_ui/face_list.html" %}
+
+{% block work_space %}
+    <style>
+        .jconfirm-title, .jconfirm-content div li{
+            color: #0b2e13;
+        }
+    </style>
+    <h1>删除部门</h1>
+        {% if messages %}
+        <ul class="messages" id="errorMessage" hidden="hidden">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        <script>
+            $.confirm({
+                title: '提示',
+                content: $('#errorMessage').html(),
+            });
+        </script>
+    {% endif %}
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            <tr>
+                <th>部门名称</th>
+                <td >{{ object.name }}</td>
+            </tr>
+        </table>
+        <p>确认删除部门 "{{ object.name }}"吗？</p>
+        <input class="btn btn-danger" type="submit" value="确认"/>
+        <button type="button" class="btn btn-info"
+                onclick="window.location.href='{% url 'enhanced_ui:department-list' %}'">返回
+        </button>
+    </form>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "enhanced_ui/face_list.html" %}
+
+{% block work_space %}
+    <style>
+        input{
+            background-color: transparent;
+        }
+        .custom-department-update-btn{
+            width: 10%;
+        }
+    </style>
+    <h1>编辑部门</h1>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+    <h2>部门信息</h2>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            {{ form.as_table }}
+        </table>
+        <button type="submit" value="提交" class="btn btn-primary custom-department-update-btn" id="input_id" disabled="True">确定</button>
+    </form>
+    <br>
+    <script type="text/javascript">
+        $("input").blur(function(){
+            department_name = $("input[ type='text' ]").val()
+            var urlresult = "{% url 'enhanced_ui:find_department_name' %}" + "?name=" + department_name;
+            $.ajax({
+                type : "GET",
+                url : urlresult,
+                success:function(data){
+                    if(data.status == 1){
+                        alert("部门名称可以使用")
+                        $('#span_hidden').html(department_name)
+                        $('#input_id').removeAttr("disabled");
+                    }
+                    else{
+                        $('#input_id').attr('disabled',"true");
+                        alert("已有此部门，请尝试其他名称")
+                    }
+                },
+                error:function(jqXHR){
+                 //   alert("失败")
+                }
+            });
+        });
+    </script>
+{% endblock %}
+{% block extra_script %}
+
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends "enhanced_ui/base_site.html" %}
+{% load static %}
+{% block main_style %}
+    {{ block.super }}
+    <link href="{% static 'enhanced_ui/css/all.css' %}" rel="stylesheet">
+    <link href="{% static 'enhanced_ui/css/bootstrap-table.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block main_script %}
+    {{ block.super }}
+    <script src="{% static 'enhanced_ui/js/bootstrap-table.min.js' %}"></script>
+    <script src="{% static 'enhanced_ui/js/bootstrap-table-zh-CN.min.js' %}"></script>
+{% endblock %}
+{% block work_space %}
+    <style>
+        .custom-face-list-btn-detail{
+            width: 30%;
+        }
+
+    </style>
+    {% if messages %}
+        <ul class="messages" id="errorMessage" hidden="hidden">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        <script type="text/javascript">
+            $.confirm({
+                title: '提示',
+                content: $('#errorMessage').html(),
+            });
+        </script>
+    {% endif %}
+    <div id="toolbar">
+        <button id="removeSelected" class="btn btn-danger">
+            <i class="fas fa-trash-alt"></i> 删除选中项
+        </button>
+    </div>
+    <table id="table"
+           data-toolbar="#toolbar"
+           data-toggle="table"
+           data-url="{% url 'person-list' %}"
+           data-side-pagination="server"
+           data-pagination="true"
+           data-page-list="[5, 10, 20, 50, 100, 200]"
+           data-search="true"
+           data-data-field="results"
+           data-total-field="count">
+        <thead>
+        <tr>
+            <th data-field="state" data-checkbox="true"></th>
+            <th data-width="70px" data-align="center" data-searchable="false" data-field="image"
+                data-formatter="imageFormatter">证件照
+            </th>
+            <th data-field="name" data-sortable="true" data-align="center">姓名</th>
+            <th data-field="department_name" data-sortable="true" data-align="center">所属部门</th>
+            <th data-field="position" data-sortable="true" data-align="center">职位</th>
+            <th data-field="employee_number" data-sortable="true" data-align="center">工号</th>
+            <th data-field="employment_date" data-sortable="true" data-align="center">入职时间</th>
+            <th data-field="departure_date" data-sortable="true" data-align="center">离职时间</th>
+            <th data-field="is_active" data-sortable="true" data-align="center" data-formatter="employeeStateFormatter">
+                在职状态
+            </th>
+            <th data-field="urls" data-width="200px" data-align="center" data-formatter="buttonFormatter">
+                <button type="button" class="btn btn-success"
+                        onclick="window.location.href='{% url 'enhanced_ui:face-create' %}'">添加人员
+                </button>
+                <button type="button" class="btn btn-primary"
+                        onclick="window.location.href='{% url 'enhanced_ui:face-batch-create' %}'">批量导入
+                </button>
+            </th>
+        </tr>
+        </thead>
+
+    </table>
+{% endblock %}
+
+{% block extra_script %}
+    {{ block.super }}
+    <script type="text/javascript">
+        function format(source, params) {
+            $.each(params, function (i, n) {
+                source = source.replace(new RegExp("\\{" + i + "\\}", "g"), n);
+            });
+            return source;
+        }
+
+
+        let $table = $('#table');
+        let $removeSelected = $('#removeSelected');
+
+
+        function getIdSelections() {
+            return $.map($table.bootstrapTable('getSelections'), function (row) {
+                return row.pk;
+            });
+        }
+
+
+        function imageFormatter(image) {
+            let pattern = '<img height="60px" width="60px" src="data:image/png;base64,{0}">';
+            return format(pattern, [image]);
+        }
+
+        function employeeStateFormatter(employeeState) {
+            if (employeeState) {
+                return '在职';
+            } else {
+                return '离职';
+            }
+        }
+
+        $removeSelected.click(function () {
+            let pks = getIdSelections();
+            if (pks.length <= 0) {
+            } else {
+                $.confirm({
+                    title: '提示',
+                    content: '确认删除选中员工吗？',
+                    buttons: {
+                        '确认': function () {
+
+                            $.post("{% url 'enhanced_ui:face-delete-selected' %}", {'pks': pks}).done(function (data) {
+                                if (!data.error) {
+                                    $.confirm({
+                                        title: '提示',
+                                        content: '删除成功',
+                                        backgroundDismiss: true,
+                                        buttons: {
+                                            '确认': function () {
+                                                window.location.reload();
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    $.confirm({
+                                        title: '提示',
+                                        content: '删除失败',
+                                        backgroundDismiss: true,
+                                        buttons: {
+                                            '确认': function () {
+
+                                            }
+                                        }
+                                    });
+                                }
+                            })
+                                .fail(function () {
+                                    console.log("error");
+                                });
+                            $table.bootstrapTable('refresh');
+                        },
+                        '取消': function () {
+
+                        }
+                    }
+                });
+            }
+        });
+
+        function buttonFormatter(urls) {
+            let links = urls.split(',');
+            let detailPattern = format('<button type="button" class="btn btn-success custom-face-list-btn-detai" onclick="window.location.href=\'{0}\'">查看</button>', [links[0]]);
+            let updatePattern = format('<button type="button" class="btn btn-info custom-face-list-btn-detai" onclick="window.location.href=\'{0}\'">编辑</button>', [links[1]]);
+            let deletePattern = format('<button type="button" class="btn btn-danger custom-face-list-btn-detai" onclick="window.location.href=\'{0}\'">删除</button>', [links[2]]);
+            return format('{0}\n{1}\n{2}', [detailPattern, updatePattern, deletePattern]);
+        }
+    </script>
+{% endblock %}

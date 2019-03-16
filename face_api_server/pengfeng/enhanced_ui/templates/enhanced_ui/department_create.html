@@ -1,0 +1,66 @@
+{% extends "enhanced_ui/face_list.html" %}
+
+{% block work_space %}
+    <style>
+        input{
+            background-color: transparent;
+        }
+        .custom-department-create-btn{
+            width: 10%;
+        }
+    </style>
+    <h1>添加部门</h1>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{#    <form action="" method="post" enctype="multipart/form-data" onsubmit="return check_department_name()">#}
+
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table class="table table-bordered" id="create_department">
+            {{ form.as_table }}
+        </table>
+        <button type="submit" value="提交" id="input_id" disabled="True"
+                class="btn btn-primary custom-department-create-btn">确定</button>
+    </form>
+    <span id="span_hidden" style="display: none"></span>
+    <script type="text/javascript">
+        $("input").blur(function(){
+            department_name = $("input[ type='text' ]").val()
+            var urlresult = "{% url 'enhanced_ui:find_department_name' %}" + "?name=" + department_name;
+            $.ajax({
+                type : "GET",
+                url : urlresult,
+                success:function(data){
+                    if(data.status == 1){
+                        alert("部门名称可以使用")
+                         $('#span_hidden').html(department_name)
+                        $('#input_id').removeAttr("disabled");
+                    }
+                    else{
+                        $('#input_id').attr('disabled',"true");
+                        alert("已有此部门，请尝试其他名称")
+                    }
+                },
+                error:function(jqXHR){
+                 //   alert("失败")
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        function check_department_name() {
+            department_name = $('#span_hidden').html()
+            var urlresult = "{% url 'enhanced_ui:update_department_is_delete' %}" + "?name=" + department_name;
+            $.ajax({
+                type : "GET",
+                url : urlresult,
+                success:function(data){
+                    return true;
+                },
+                error:function(jqXHR){
+                    alert("失败修改状态")
+                }
+            });
+
+        }
+    </script>
+{% endblock %}

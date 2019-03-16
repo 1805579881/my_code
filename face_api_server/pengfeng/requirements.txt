@@ -1,0 +1,22 @@
+django
+djangorestframework
+djangorestframework-bulk
+djangorestframework-filters
+drf-yasg
+django-picklefield
+channels
+channels_redis
+psycopg2-binary
+django-filter==2.0.0
+daphne
+
+# random image generate
+numpy
+Pillow
+# functional test
+requests
+openpyxl
+arrow
+pyzip
+coverage
+business_calendar

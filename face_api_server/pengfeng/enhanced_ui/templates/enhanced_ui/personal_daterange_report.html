@@ -1,0 +1,53 @@
+{% extends "enhanced_ui/base_site.html" %}
+{% load static %}
+{% block main_style %}
+    {{ block.super }}
+    <link href="{% static 'enhanced_ui/css/all.css' %}" rel="stylesheet">
+    <link href="{% static 'enhanced_ui/css/bootstrap-table.min.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+{% block main_script %}
+    {{ block.super }}
+    <script src="{% static 'enhanced_ui/js/bootstrap-table.min.js' %}"></script>
+    <script src="{% static 'enhanced_ui/js/bootstrap-table-zh-CN.min.js' %}"></script>
+{% endblock %}
+
+{% block work_space %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h5>{{ object.name }}({{ object.employee_number }})&nbsp;&nbsp;{{ start_date }}
+                    ~ {{ end_date }}考勤记录</h5>
+                <p>总体情况：出勤{{ attended_days }}天（其中加班{{ additional_days }}天），缺勤{{ absent_days }}天</p>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th class="text-center">日期</th>
+                        <th class="text-center">工作日</th>
+                        <th class="text-center">是否出勤</th>
+                        <th class="text-center">到达时间</th>
+                        <th class="text-center">离开时间</th>
+                        <th class="text-center">备注</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for record in records %}
+                        <tr class="{{ record.table_class }}">
+                            <td class="text-center">{{ record.date }}（{{ record.weekday }}）</td>
+                            <td class="text-center">
+                                {% if record.is_workday %}是{% else %}否{% endif %}
+                            </td>
+                            <td class="text-center">{% if record.attended %}是{% else %}否{% endif %}</td>
+                            <td class="text-center">{{ record.in }}</td>
+                            <td class="text-center">{{ record.out }}</td>
+                            <td class="text-center">{% if record.overtime %}加班{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

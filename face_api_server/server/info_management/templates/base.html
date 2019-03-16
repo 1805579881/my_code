@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>人脸匹配后台管理</title>
+    {% block main_style %}
+    {% endblock %}
+    {% block main_script %}
+    {% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-default">
+
+        <div class="navbar-header">
+            {% load staticfiles %}
+            <img class="logo"  src="../static/images/logo-perf.png" alt="图片加载失败">
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="">人员信息管理</a></li>
+                <li><a href="">匹配记录</a></li>
+                <li><a href="">设备绑定</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    {% block people_info_detail %}{% endblock %}
+    {% block people_info_create %}{% endblock %}
+    {% block people_info_edit %}{% endblock %}
+    {% block people_info_delete %}{% endblock %}
+    {% block index %}{% endblock %}
+    {% block remove_script %}{% endblock %}
+
+
+</body>
+</html>

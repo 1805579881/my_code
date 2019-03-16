@@ -1,0 +1,139 @@
+{% extends "enhanced_ui/base.html" %}
+{% load static %}
+
+{% block title %}
+    <title>{{ title|default:"人脸匹配应用" }}</title>
+{% endblock %}
+
+{% block main_style %}
+    <link href="{% static 'enhanced_ui/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'enhanced_ui/css/dashboard.css' %}" rel="stylesheet">
+    <link href="{% static 'enhanced_ui/css/jquery-confirm.min.css' %}" rel="stylesheet">
+    <link href="{% static 'enhanced_ui/css/bootstrap-multiselect.css' %}" rel="stylesheet">
+    <link href="{% static 'enhanced_ui/css/custom-style.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block main_script %}
+    <script type="text/javascript" src="{% static 'enhanced_ui/js/jquery-3.3.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'enhanced_ui/js/popper.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'enhanced_ui/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'enhanced_ui/js/jquery-confirm.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'enhanced_ui/js/bootstrap-multiselect.js' %}"></script>
+    <script type="text/javascript" src="{% static 'enhanced_ui/js/custom.js' %}"></script>
+{% endblock %}
+
+{% block navigator %}
+    <div id="main-navigator">
+{#        <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-toggleable-md navbar-inverse fixed-top bg-inverse navbar-transparent">#}
+           <nav class="navbar navbar-expand-lg navbar-light navbar-toggleable-md navbar-inverse fixed-top navbar-transparent bg-inverse ">
+               <div><a href="{% url 'enhanced_ui:index' %}"><img class="custom-logo" src="{% static 'enhanced_ui/custom-imgages/logo-perf.png' %}"/></a></div>
+
+{#            <span>dada</span>   #}
+{#            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"#}
+{#                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">#}
+{#                <span class="navbar-toggler-icon"></span>#}
+{#            </button>#}
+{#            <div class="collapse navbar-collapse" id="navbarSupportedContent">#}
+{#                <ul class="navbar-nav mr-auto">#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'enhanced_ui:face-list' %}">员工管理</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'enhanced_ui:department-list' %}">部门管理</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'enhanced_ui:record-list' %}">匹配记录</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'sync:device-list' %}">终端监控</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'enhanced_ui:report' %}">考勤报表</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'enhanced_ui:change-password' %}">修改密码</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'enhanced_ui:logout' %}">退出登录</a>#}
+{#                    </li>#}
+{##}
+{#                </ul>#}
+{#            </div>#}
+        </nav>
+
+    </div>
+{% endblock navigator %}
+
+{% block container %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                {% block content %}
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <div class="leftsidebar_box">
+{#                                        <div class="line"></div>#}
+                                        <dl class="source">
+                                            <dt><a href="{% url 'enhanced_ui:index' %}">首页</a><img src="{% static 'enhanced_ui/custom-imgages/select_xl01.png' %}"></dt>
+                                        </dl>
+{#                                        <dl class="system_log">#}
+{#                                            <dt onClick="changeImage()"><a href="{% url 'enhanced_ui:face-list' %}">员工管理</a><img src="{% static 'enhanced_ui/custom-imgages/select_xl01.png' %}"></dt>#}
+{#                                            <dd class="first_dd"><a href="#">充值记录</a></dd>#}
+{#                                            <dd><a href="#">短信充值记录</a></dd>#}
+{#                                            <dd><a href="#">消费记录</a></dd>#}
+{#                                            <dd><a href="#">操作记录</a></dd>#}
+{#                                        </dl>#}
+
+                                        <dl class="custom">
+                                            <dt onClick="changeImage()"><a href="{% url 'enhanced_ui:face-list' %}">员工管理</a><img src="{% static 'enhanced_ui/custom-imgages/select_xl01.png' %}"></dt>
+                                        </dl>
+                                        <dl class="cloud">
+                                            <dt><a href="{% url 'enhanced_ui:department-list' %}">部门管理</a><img src="{% static 'enhanced_ui/custom-imgages/select_xl01.png' %}"></dt>
+                                        </dl>
+
+                                        <dl class="channel">
+                                            <dt><a href="{% url 'enhanced_ui:record-list' %}">匹配记录</a><img src="{% static 'enhanced_ui/custom-imgages/select_xl01.png' %}"></dt>
+                                        </dl>
+
+                                        <dl class="app">
+                                            <dt onClick="changeImage()"><a href="{% url 'sync:device-list' %}">终端管理</a><img src="{% static 'enhanced_ui/custom-imgages/select_xl01.png' %}"></dt>
+                                        </dl>
+                                        <dl class="statistics">
+                                            <dt><a href="{% url 'enhanced_ui:report' %}">考勤报表</a><img src="{% static 'enhanced_ui/custom-imgages/select_xl01.png' %}"></dt>
+                                        </dl>
+                                        <dl class="syetem_management">
+                                            <dt>用户管理<img src="{% static 'enhanced_ui/custom-imgages/select_xl01.png' %}"></dt>
+                                 			<dd class="first_dd"><a href="{% url 'enhanced_ui:change-password' %}">修改密码</a></dd>
+                                            <dd><a href="{% url 'enhanced_ui:logout' %}">退出登录</a></dd>
+                                        </dl>
+
+
+                                </div>
+
+                            </div>
+                            <div class="col-md-11" style="font-family: '微软黑';font-size:12px;color:#ffffff;">
+                                {% block work_space %}{% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                {% endblock %}
+            </div>
+        </div>
+
+	    </div>
+
+    </div>
+{% endblock %}
+
+{% block copy_right %}
+
+{% endblock copy_right %}
+
+{% block not_authenticated %}
+
+{% endblock %}
+
+{% block extra_script %}
+
+{% endblock %}

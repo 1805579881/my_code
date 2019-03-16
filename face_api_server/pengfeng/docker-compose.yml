@@ -1,0 +1,28 @@
+version: "3"
+services:
+    web:
+        image: shengwubin/face:latest
+        command: bash -c "python3 manage.py migrate && python3 manage.py handle_repeated_items && python3 manage.py create_super_user --username admin --password a00123456 --noinput --email 'shengwubin@perfxlab.com' && python3 manage.py runserver 0.0.0.0:8000"
+        ports:
+          - 10000:8000
+        depends_on:
+          - redis
+          - postgres
+        environment:
+          - CONTAINER=DOCKER
+          - DATABASE_HOST=postgres
+          - REDIS_HOST=redis
+        restart: always
+        volumes:
+         - /home/shengwubin/pengfeng/log:/pengfeng/site/code/log
+         - /home/shengwubin/pengfeng/media:/pengfeng/site/code/media
+    redis:
+        image: redis
+        restart: always
+    postgres:
+        image: postgres
+        environment:
+          - POSTGRES_PASSWORD=pengfeng
+        restart: always
+        volumes:
+         - /home/shengwubin/pengfeng/postgresql/data:/var/lib/postgresql/data

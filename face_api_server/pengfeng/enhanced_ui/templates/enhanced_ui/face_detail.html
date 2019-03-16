@@ -1,0 +1,204 @@
+{% extends "enhanced_ui/face_list.html" %}
+{% load static %}
+{% block main_style %}
+    {{ block.super }}
+    <link href="{% static 'enhanced_ui/css/all.css' %}" rel="stylesheet">
+    <link href="{% static 'enhanced_ui/css/bootstrap-table.min.css' %}" rel="stylesheet">
+    <link href="{% static 'enhanced_ui/css/pikaday.css' %}" rel="stylesheet">
+    <link href="{% static 'enhanced_ui/css/daterangepicker.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block main_script %}
+    {{ block.super }}
+    <script src="{% static 'enhanced_ui/js/bootstrap-table.min.js' %}"></script>
+    <script src="{% static 'enhanced_ui/js/bootstrap-table-zh-CN.min.js' %}"></script>
+    <script src="{% static 'enhanced_ui/js/moment-with-locales.min.js' %}"></script>
+    <script src="{% static 'enhanced_ui/js/pikaday.js' %}"></script>
+    <script src="{% static 'enhanced_ui/js/daterangepicker.min.js' %}"></script>
+{% endblock %}
+{% block work_space %}
+    <style>
+
+        .custom-profile-url li{
+            background-color:rgba(0,0,0,0);
+        }
+        .custom-profile-image{
+            border-radius: 50%;
+        }
+        .custom-profile-span-left{
+            float:left;
+        }
+        .custom-profile-span-right{
+            float:right;
+        }
+        .available, .drp-selected, .monthselect, .yearselect{
+            color: #0b2e13;
+        }
+        .monthselect option, .yearselect option{
+            color: #0b2e13;
+        }
+        .btn-info, .btn-danger{
+            width: 40%;
+        }
+        .custom-button-div{
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+    <h1>查看人员</h1>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="container">
+              <h2>个人信息</h2>copy_right
+              <ul class="list-group custom-profile-url"  >
+                    <li class="list-group-item" style="text-align: center;"><img class="custom-profile-image" height="128px" width="128px" src="data:image/png;base64,{{ object.image }}"></li>
+                    <li class="list-group-item"><span class="custom-profile-span-left">姓名：</span><span class="custom-profile-span-right">{{ object.name }}</span></li>
+                    <li class="list-group-item"><span class="custom-profile-span-left">部门：</span><span class="custom-profile-span-right">{{ object.department }}</span></li>
+                    <li class="list-group-item"><span class="custom-profile-span-left">职位：</span><span class="custom-profile-span-right">{{ object.position }}</span></li>
+                    <li class="list-group-item"><span class="custom-profile-span-left">工号：</span><span class="custom-profile-span-right">{{ object.employee_number }}</span></li>
+                    <li class="list-group-item"><span class="custom-profile-span-left">入职时间：</span><span class="custom-profile-span-right">{{ object.employment_date }}</span></li>
+                    <li class="list-group-item"><span class="custom-profile-span-left">离职时间：</span><span class="custom-profile-span-right">{{ object.departure_date }}</span></li>
+                    <li class="list-group-item"><span class="custom-profile-span-left">在职状态</span><span class="custom-profile-span-right">{% if object.is_active %}在职{% else %}离职{% endif %}</span></li>
+              </ul>
+                <div class="custom-button-div">
+                    <button type="button" class="btn btn-info"
+                        onclick="window.location.href='{% url 'enhanced_ui:face-update' object.pk %}'">编辑
+                    </button>
+                    <button type="button" class="btn btn-danger"
+                        onclick="window.location.href='{% url 'enhanced_ui:face-list' %}'">返回
+                    </button>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-9">
+            <table class="table table-bordered">
+                <tr>
+                    <th>考勤报表（30天内）</th>
+                    <td>
+                        <div id="toolbar">
+                            <label for="daterangepicker"><strong>时间区间查询</strong></label>
+                            <input type="text" class="custom-profile-input-date" id="daterangepicker" style="width: 200px; background: transparent;">
+                        </div>
+                        <table data-toolbar="#toolbar" data-toggle="table" data-pagination="true" data-page-size="15" style="background: transparent;">
+                            <thead>
+                            <tr>
+                                <th data-sortable="true" data-align="center">记录日期</th>
+                                <th data-sortable="true" data-align="center">是否出勤</th>
+                                <th data-align="center">到达时间</th>
+                                <th data-align="center">离开时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in object.report %}
+                                <tr>
+                                    <td>{{ item.date }}</td>
+                                    <td>{{ item.attended }}</td>
+                                    <td>{{ item.in }}</td>
+                                    <td>{{ item.out }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <th>详细出勤记录</th>
+                    <td>
+                        <table data-toggle="table" data-search="true" data-pagination="true"
+                               data-page-size="15" style="background: transparent;">
+                            <thead>
+                            <tr>
+                                <th data-align="center">记录类型</th>
+                                <th data-sortable="true" data-align="center">记录时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for record in object.records.all %}
+                                <tr>
+                                    <td>{{ record.record_type }}</td>
+                                    <td>{{ record.created }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <th>所属设备列表</th>
+                    <td>
+                        <table data-toggle="table" data-search="true" data-pagination="true" data-page-size="15" style="background: transparent;">
+                            <thead>
+                            <tr>
+                                <th data-sortable="true" data-align="center">设备名</th>
+                                <th data-sortable="true" data-align="center">设备类型</th>
+                                <th data-sortable="true" data-align="center">设备ID</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for device in object.devices.all %}
+                                <tr>
+                                    <td>{{ device.name }}</td>
+                                    <td>{{ device.device_type }}</td>
+                                    <td>{{ device.uuid }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+
+
+{% endblock %}
+{% block extra_script %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $('#daterangepicker').daterangepicker({
+            "locale": {
+                "coloe":"#5faee3",
+                "format": "YYYY-MM-DD",
+                "separator": " / ",
+                "applyLabel": "查询",
+                "cancelLabel": "取消",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "周日",
+                    "周一",
+                    "周二",
+                    "周三",
+                    "周四",
+                    "周五",
+                    "周六"
+                ],
+                "monthNames": [
+                    "一月",
+                    "二月",
+                    "三月",
+                    "四月",
+                    "五月",
+                    "六月",
+                    "七月",
+                    "八月",
+                    "九月",
+                    "十月",
+                    "十一月",
+                    "十二月"
+                ],
+                "firstDay": 1
+            },
+            'showDropdowns': true
+        }, function (start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            window.open('{% url "enhanced_ui:face-date-range-report" object.pk %}' + "?start_date=" + start.format('YYYY-MM-DD') + "&end_date=" + end.format('YYYY-MM-DD'));
+        });
+    </script>
+{% endblock %}

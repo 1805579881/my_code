@@ -1,0 +1,21 @@
+{% extends "enhanced_ui/face_list.html" %}
+{% load static %}
+{% block work_space %}
+    <h1>批量上传</h1>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <p>上传压缩包的格式为zip，且图片名称需要与excel表格中的工号对应，详细见<a href="{% static 'enhanced_ui/example/demo.zip' %}">示例文件</a></p>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="提交"/>
+    </form>
+{% endblock %}
