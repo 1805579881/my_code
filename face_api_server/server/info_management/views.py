@@ -28,7 +28,6 @@ class PeopleCreate(CreateView):
     template_name = 'people_info_create.html'
     fields = ['name','number','image']
 
-
     def get_success_url(self):
         return reverse_lazy('info_management:info_management_index')
 

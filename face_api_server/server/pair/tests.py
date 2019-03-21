@@ -2,11 +2,10 @@
 from __future__ import unicode_literals
 
 from django.test import TestCase
-import numpy
+import numpy as np
 import ctypes
+import math
 
 # Create your tests here.
-score = numpy.ones(5, 'f');
-idx = numpy.ones(5, 'l');
 
 

@@ -4,6 +4,7 @@ from django.db import models
 from datetime import date
 from datetime import datetime
 from uuid import uuid1
+from face_veri_pose_cd import get_feature_out_gpu_set
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 import logging
@@ -11,7 +12,13 @@ import numpy as np
 from PIL import Image
 import base64
 from io import BytesIO
+from pair import models as pm
+import os
+import threading
 
+# Create your views here.
+lock = [threading.Lock() for i in range(4)]
+device_id = int(os.environ.get('DEVICE_ID'))
 # Create your models here.
 logger = logging.getLogger(__name__)
 
@@ -34,6 +41,7 @@ class PeopleInfo(models.Model):
         upload_to='info_management/image', null=True, blank=True,
         verbose_name=u"照片"
     )
+    feature = models.CharField(max_length=255, verbose_name="特征值")
 
     def __str__(self):
         return self.name
@@ -48,12 +56,14 @@ class PeopleInfo(models.Model):
             raise ValidationError('未上传图片')
 
         if self.image:
-            print '执行图片编码'
             try:
+                check_flag, feature = get_feature_out_gpu_set(self.image, pm.det, pm.landmark_p, pm.recog,
+                                                              pm.align, device_id)
+                if check_flag :
+                    self.feature = feature
                 image_bytes = self.image.read()
                 images = base64.b64encode(image_bytes)
                 img_str = images.encode('utf-8')
-
             except Exception:
                 logger.exception('{}图片转化为base64字符串失败'.format(self.number))
                 self.image = None

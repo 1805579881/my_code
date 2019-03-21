@@ -21,11 +21,8 @@ import threading
 
 # Create your views here.
 lock = [threading.Lock() for i in range(4)]
-# 添加1 删除，为了本地项目run
-device_id = int(os.environ.get('DEVICE_ID',1))
+device_id = int(os.environ.get('DEVICE_ID'))
 
-"""
-正确代码 要修改回去
 def load_db(idx):
     ret = []
     with open("/home/rentingting/project/face_verification/face_api_demo_cd/features/perf_part_list.txt", "r") as fo:
@@ -37,27 +34,8 @@ def load_db(idx):
 
 global_db = load_db("/home/rentingting/project/face_verification/face_api_demo_cd/features/perf_part_list.txt")
 
-"""
 
-
-def load_db(idx):
-    """
-    错误代码
-    :param idx:
-    :return:
-    """
-    ret = []
-    with open("pair/perf_part_list.txt", "r") as fo:
-        for line in fo.readlines():
-            [filename, id] = line.split()
-            ret.append((filename, id))
-    return ret
-
-global_db = "sss"
-
-
-
-# global_db=[]
+#global_db=[]
 
 def create_dir(prefix, score):
     dirname = prefix + '_' + datetime.now().strftime("%Y%m%d_%H%M%S_%f_") + str(randint(100, 999)) + '_' + str(
@@ -113,7 +91,7 @@ def load_image(idx):
         return (b64encode(img.read()), id)
 
 
-def create_result_xml_xcmp(cxxh, success, check_flag, idx_score):
+def  create_result_xml_xcmp(cxxh, success, check_flag, idx_score):
     root = ET.Element("DATA", {"CODE": "0010"})
     if cxxh:
         record = ET.SubElement(root, "RECORD", {"CXXH": cxxh})
@@ -168,7 +146,7 @@ def index(request):
             # print models.det
             t3 = time.time()
             print >> sys.stderr, 'Decoding image 1 for %.2fms, and image 2 for %.2fms' % (
-            1000.0 * (t1 - t0), 1000.0 * (t2 - t1))
+                1000.0 * (t1 - t0), 1000.0 * (t2 - t1))
             print >> sys.stderr, 'Scoring for %.1fms' % (1000.0 * (t3 - t2),)
             # dirname = create_dir('pair', score)
             # cv2.imwrite(os.path.join(dirname, '0.jpg'), img0)
@@ -178,12 +156,12 @@ def index(request):
             try:
                 t3 = time.time()
                 print >> sys.stderr, 'start to analyze for thread %s on card %d' % (
-                threading.current_thread().getName(), device_id)
+                    threading.current_thread().getName(), device_id)
                 score = get_score_gpu_set(img0, img1, models.det, models.landmark_p, models.recog, models.align,
                                           device_id);
                 t4 = time.time()
                 print >> sys.stderr, 'analyze ending for thread %s, %.2fms on card %d' % (
-                threading.current_thread().getName(), 1000.0 * (t4 - t3), device_id)
+                    threading.current_thread().getName(), 1000.0 * (t4 - t3), device_id)
             finally:
                 lock[device_id].release();
 
@@ -238,13 +216,13 @@ def pose(request):
             lock[device_id].acquire();
             try:
                 print >> sys.stderr, 'start to analyze pose for thread %s on card %d' % (
-                threading.current_thread().getName(), device_id)
+                    threading.current_thread().getName(), device_id)
                 t1 = time.time()
                 check_flag, shot, front_idx = get_pose_batch_gpu_set(frames, models.det, models.landmark_p, models.pose,
                                                                      pose, device_id)
                 t2 = time.time()
                 print >> sys.stderr, 'analyze pose for thread %s, %.2fms on card %d' % (
-                threading.current_thread().getName(), 1000.0 * (t2 - t1), device_id)
+                    threading.current_thread().getName(), 1000.0 * (t2 - t1), device_id)
             finally:
                 lock[device_id].release();
             # print >>sys.stderr, result, pose, ang
@@ -292,21 +270,26 @@ def xcmp(request):
             lock[device_id].acquire();
             try:
                 print >> sys.stderr, 'start to extract feature for thread %s on card %d' % (
-                threading.current_thread().getName(), device_id)
+                    threading.current_thread().getName(), device_id)
                 t1 = time.time()
+                # feature 是一个多维的数组，就是一个面部的特征值
                 check_flag, feature = get_feature_out_gpu_set(img, models.det, models.landmark_p, models.recog,
                                                               models.align, device_id)
                 t2 = time.time()
                 print >> sys.stderr, 'end to extract feature for thread %s, %.2fms on card %d' % (
-                threading.current_thread().getName(), 1000.0 * (t2 - t1), device_id)
+                    threading.current_thread().getName(), 1000.0 * (t2 - t1), device_id)
             finally:
                 lock[device_id].release();
             t3 = time.time();
             print >> sys.stderr, "feature shape ", feature.shape, " type:", feature.dtype
+
+            # idx_score 匹配到的分数 ， xcmp_fun 进行数据的比对
             idx_score = xcmp_fun(np.reshape(feature, (512,)),
                                  "/home/rentingting/project/face_verification/face_api_demo_cd/features/perf_part_feature.bin".encode(
                                      "utf-8"), threshold=0.01, top=10)
+            # 公式进行映射 分数0-1
             idx_score_remap = [(idx, 1.0 / (1 + math.exp(-11.945 * score + 4.97))) for idx, score in idx_score]
+
             print >> sys.stderr, 'Xcompare spent  for %.1fms: idx_score=%s' % (1000.0 * (t3 - t2), idx_score)
             success = check_flag == 1
             print 'Decoding image for %.2fms' % (1000.0 * (t1 - t0),)
