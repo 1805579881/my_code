@@ -8,8 +8,5 @@ def xcmp_fun(feature, db_name, top = 5, threshold = 0.2):
     idx = numpy.ones(n_of_top, 'l');
     # 转为float32类型
     feature = numpy.array(feature, dtype="float32")
-    # 数据库比对特征值
     xcmp_cpp.xcmp(feature,  db_name, score, idx)
-    return [(i, c) for c, i in zip(score.tolist(), idx.tolist()) if c > threshold]
-
-
+    return [(i, c) for c, i  in zip(score.tolist(), idx.tolist()) if c > threshold]

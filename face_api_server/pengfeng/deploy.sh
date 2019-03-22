@@ -1,1 +1,0 @@
-sudo docker build -t shengwubin/face:latest . && sudo docker-compose up

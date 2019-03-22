@@ -1,0 +1,3 @@
+[submodule "apis/rest"]
+	path = apis/rest
+	url = https://gitee.com/shengwubin/rest.git

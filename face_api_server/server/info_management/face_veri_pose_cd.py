@@ -13,5 +13,5 @@ def get_pose():
     pass
 def get_pose_batch_gpu_set():
     pass
-def get_feature_out_gpu_set():
+def get_feature_out_gpu_set(*args,**kwargs):
     pass
