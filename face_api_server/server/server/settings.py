@@ -155,7 +155,7 @@ LOGGING = {
         }
     },
     'loggers': {
-        'enhanced_ui': {
+        'info_management': {
             'handlers': ['default', 'file'],
             'level': 'DEBUG',
             'propagate': True,
@@ -164,4 +164,5 @@ LOGGING = {
 }
 
 IS_IMAGE = ['jpg','jpeg','png','bmp','BMP','JPG','PNG','JPEG']
+IMAGE_SIZE = 500
 
