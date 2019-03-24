@@ -3,11 +3,13 @@
 import os
 from base_response import BaseResponse
 
+
 def get_file_size(image):
     try:
-        file_size = len(image.read())
+        image_bytes = image.read()
+        file_size = len(image_bytes)
         file_size = float(file_size)
         file_size_Mb = file_size / 1024
-        return file_size_Mb
+        return file_size_Mb,image_bytes
     except Exception as e:
        raise e

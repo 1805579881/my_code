@@ -22,6 +22,7 @@ lock = [threading.Lock() for i in range(4)]
 device_id = int(os.environ.get('DEVICE_ID',1))
 logger = logging.getLogger(__name__)
 
+
 def create_info(request):
     if request.method == 'POST':
         response_data = BaseResponse()
@@ -38,6 +39,7 @@ def create_info(request):
             response_data.message = u"未获取到上传的照片，照片为必填项，请刷新页面重试"
             logger.error("错误信息{}".format(response_data.message))
             return JsonResponse(response_data.dict)
+
         file_name = image.name.encode('unicode-escape').decode('string_escape')
         image_name,image_suffix = file_name.rsplit(".")
         if image_suffix not in IS_IMAGE:
@@ -46,8 +48,9 @@ def create_info(request):
             logger.error("错误信息{}".format(response_data.message))
             return JsonResponse(response_data.dict)
         try:
-            image_size = get_file_size(image)
-            if image_size >   IMAGE_SIZE:
+            image_size,image_bytes = get_file_size(image)
+
+            if image_size > IMAGE_SIZE:
                 response_data.code = 400
                 response_data.message = u'证件照不能大于500kb，请重试'
                 logger.error("错误信息{}".format(response_data.message))
@@ -57,9 +60,9 @@ def create_info(request):
             response_data.message = u'图片路径错误或者图片大小计算出错，请重试'
             logger.error("错误信息{}".format(response_data.message))
             return JsonResponse(response_data.dict)
-        image_bytes = image.read()
+       
         image_base64 = base64.b64encode(image_bytes)
-        img = cv2.imdecode(np.fromstring(image_base64, np.uint8), cv2.IMREAD_COLOR)
+        img = cv2.imdecode(np.fromstring(image_bytes, np.uint8), cv2.IMREAD_COLOR)
         global device_id
         # 获取线程锁
         lock[device_id].acquire()
